@@ -38,55 +38,54 @@
      setTimeout(function(){
         PopUp();
      },500); // 500 to load it after 0.5 seconds from page load
-    });
 
-    function PopUp(){
-      var input = prompt("Please enter your username:");
-      if (input == null || input == "" || !input.replace(/\s/g, '').length) {
-        alert("Username is required!");
-        PopUp();
-      }else{
-        userName = input
-        var data = {nickName: userName, userID: socket.id};
-        console.log('User added: ' + data.nickName + ' with ID: ' + data.userID);
-        socket.emit('setSocketID',data);
-      }
-    }
-
-    //Handle messages:
-    $(function () {
-      $('form').submit(function(){
+     $('form').submit(function(){
         //Send message along with the username of the client:
         var msg = {message: $('#m').val(),user: userName};
         storedMessage = $('#m').val();
         console.log("Stored message: " + storedMessage);
         
         socket.emit('chat message', msg);
-        $('#m').val('');
-        return false;
-      });
-      socket.on('chat message', function(msg){
-        $('#messages').append($('<li>').html(msg));
-      });
-      socket.on('new-user', function(name){
-        $('#messages').append($('<li>').text(name + " has entered the chatroom:D"));
-      });
-      socket.on('user-left',function(name){
-        $('#messages').append($('<li>').text(name + " has left the chatroom:("));
-      });
-    });
+          $('#m').val('');
+          return false;
+        });
+        socket.on('chat message', function(msg){
+          $('#messages').append($('<li>').html(msg));
+        });
+        socket.on('new-user', function(name){
+          $('#messages').append($('<li>').text(name + " has entered the chatroom:D"));
+        });
+        socket.on('user-left',function(name){
+          $('#messages').append($('<li>').text(name + " has left the chatroom:("));
+        });
 
-    //Handle keypress
-    document.onkeydown = function(event) {
-      if(event.keyCode==38){
-        console.log("Message loaded: " + storedMessage);
-        if(storedMessage.length==0){
-          return;
+        function PopUp(){
+        var input = prompt("Please enter your username:");
+        if (input == null || input == "" || !input.replace(/\s/g, '').length) {
+          alert("Username is required!");
+          PopUp();
         }else{
-          $("#m").val(storedMessage);
+          userName = input
+          var data = {nickName: userName, userID: socket.id};
+          console.log('User added: ' + data.nickName + ' with ID: ' + data.userID);
+          socket.emit('setSocketID',data);
         }
       }
-    };
+
+      //Handle keypress
+      document.onkeydown = function(event) {
+        if(event.keyCode==38){
+          console.log("Message loaded: " + storedMessage);
+          if(storedMessage.length==0){
+            return;
+          }else{
+            $("#m").val(storedMessage);
+          }
+        }
+      };
+    });
+
+    
 
   </script>
 </html>
