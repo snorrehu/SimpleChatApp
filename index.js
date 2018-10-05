@@ -1,6 +1,7 @@
 var app = require('express')();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
+var linkify = require('linkifyjs/html');
 
 var users = [];
 
@@ -23,7 +24,11 @@ io.on('connection', function(socket){
 
   //Handle chat message from client
   socket.on('chat message', function(msg){
-    io.emit('chat message', msg);
+  	var msgRecieved = {message: msg.message,user: msg.user};
+  	linkifiedMessage = linkify(msgRecieved.message); 
+  	var msgToSend = "<p>" + msgRecieved.user + " says: " + linkifiedMessage;
+
+    io.emit('chat message', msgToSend);
     console.log(msg.user + " says: " + msg.message);
   });
 
@@ -38,7 +43,7 @@ io.on('connection', function(socket){
 });
 
 //Listen to port:
-http.listen(3000, function(){
+http.listen(process.env.PORT||3000, function(){
   console.log('listening on *:3000');
 });
 

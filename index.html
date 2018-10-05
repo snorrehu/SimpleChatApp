@@ -24,10 +24,11 @@
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
   <script src="/socket.io/socket.io.js"></script>
   <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
-  <script>
 
+  <script>
     var userName;
     var socket = io();
+    var storedMessage="";
 
     //Prompt for username:
     $(document).ready(function(){
@@ -42,7 +43,7 @@
         alert("Username is required!");
         PopUp();
       }else{
-        userName = input;
+        userName = input
         var data = {nickName: userName, userID: socket.id};
         console.log('User added: ' + data.nickName + ' with ID: ' + data.userID);
         socket.emit('setSocketID',data);
@@ -54,12 +55,15 @@
       $('form').submit(function(){
         //Send message along with the username of the client:
         var msg = {message: $('#m').val(),user: userName};
+        storedMessage = $('#m').val();
+        console.log("Stored message: " + storedMessage);
+        
         socket.emit('chat message', msg);
         $('#m').val('');
         return false;
       });
       socket.on('chat message', function(msg){
-        $('#messages').append($('<li>').text(msg.user + " says: " +  msg.message));
+        $('#messages').append($('<li>').html(msg));
       });
       socket.on('new-user', function(name){
         $('#messages').append($('<li>').text(name + " has entered the chatroom:D"));
@@ -68,6 +72,18 @@
         $('#messages').append($('<li>').text(name + " has left the chatroom:("));
       });
     });
+
+    //Handle keypress
+    document.onkeydown = function(event) {
+      if(event.keyCode==38){
+        console.log("Message loaded: " + storedMessage);
+        if(storedMessage.length==0){
+          return;
+        }else{
+          $("#m").val(storedMessage);
+        }
+      }
+    };
 
   </script>
 </html>
