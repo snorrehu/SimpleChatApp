@@ -26,12 +26,14 @@
   <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
 
   <script>
-    var userName;
-    var socket = io();
-    var storedMessage="";
+    
 
     //Prompt for username:
     $(document).ready(function(){
+      var userName;
+      var socket = io();
+      var storedMessage="";
+
      setTimeout(function(){
         PopUp();
      },500); // 500 to load it after 0.5 seconds from page load
