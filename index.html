@@ -33,7 +33,7 @@
     $(document).ready(function(){
      setTimeout(function(){
         PopUp();
-     },1000); // 1000 to load it after 1 seconds from page load
+     },500); // 500 to load it after 0.5 seconds from page load
     });
 
     function PopUp(){
@@ -43,23 +43,29 @@
         PopUp();
       }else{
         userName = input;
-        console.log('Username added: ' + userName);
-        socket.emit('send-nickname',userName);
+        var data = {nickName: userName, userID: socket.id};
+        console.log('User added: ' + data.nickName + ' with ID: ' + data.userID);
+        socket.emit('setSocketID',data);
       }
     }
 
     //Handle messages:
     $(function () {
       $('form').submit(function(){
-        socket.emit('chat message', $('#m').val());
+        //Send message along with the username of the client:
+        var msg = {message: $('#m').val(),user: userName};
+        socket.emit('chat message', msg);
         $('#m').val('');
         return false;
       });
       socket.on('chat message', function(msg){
-        $('#messages').append($('<li>').text(userName + " says: " +  msg));
+        $('#messages').append($('<li>').text(msg.user + " says: " +  msg.message));
       });
-      socket.on('new-user', function(msg){
-        $('#messages').append($('<li>').text(msg + " has entered the chatroom!"));
+      socket.on('new-user', function(name){
+        $('#messages').append($('<li>').text(name + " has entered the chatroom:D"));
+      });
+      socket.on('user-left',function(name){
+        $('#messages').append($('<li>').text(name + " has left the chatroom:("));
       });
     });
 
