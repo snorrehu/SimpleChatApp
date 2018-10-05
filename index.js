@@ -42,10 +42,6 @@ io.on('connection', function(socket){
 
 });
 
-//Listen to port:
-http.listen(process.env.PORT||3000, function(){
-  console.log('listening on *:3000');
-});
 
 //Send event to everyone:
 io.emit('some event', { for: 'everyone' });
@@ -72,3 +68,6 @@ function removeUser(id){
     	}
 	}
 }
+
+//Listen to port:
+http.listen(process.env.PORT||3000);
